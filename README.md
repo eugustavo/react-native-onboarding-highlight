@@ -323,6 +323,31 @@ function App() {
 }
 ```
 
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details.
+
+### Releasing
+
+This project uses [Changesets](https://github.com/changesets/changesets) to manage versions and releases automatically.
+
+When making changes:
+
+```bash
+# Add a changeset describing your changes
+npm run changeset
+
+# Commit your changes and the changeset
+git add .
+git commit -m "feat: add new feature"
+git push
+```
+
+The GitHub Actions will automatically:
+1. Create a release PR when changesets are detected
+2. Publish to npm when the PR is merged
+3. Create a GitHub Release with the changelog
+
 ## License
 
 MIT
