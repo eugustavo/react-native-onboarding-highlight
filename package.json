@@ -8,12 +8,16 @@
   "react-native": "src/index.ts",
   "source": "src/index.ts",
   "files": [
-    "src",
-    "lib"
+    "src/",
+    "lib/",
+    "!src/example.tsx",
+    "!**/*.map"
   ],
   "scripts": {
-    "prepare": "bob build",
-    "build": "bob build",
+    "prepare": "bob build && npm run clean:sourcemaps && npm run clean:examples",
+    "build": "bob build && npm run clean:sourcemaps && npm run clean:examples",
+    "clean:sourcemaps": "find lib -name '*.map' -type f -delete",
+    "clean:examples": "rm -f lib/commonjs/example.js lib/module/example.js lib/typescript/example.d.ts lib/typescript/example.d.ts.map",
     "test": "jest",
     "test:watch": "jest --watch",
     "lint": "eslint src --ext .ts,.tsx",

@@ -1,0 +1,36 @@
+# Source maps (economiza ~220 kB)
+*.map
+
+# Development files
+__tests__/
+*.test.ts
+*.test.tsx
+*.spec.ts
+*.spec.tsx
+
+# Example file
+src/example.tsx
+lib/commonjs/example.js
+lib/commonjs/example.js.map
+lib/module/example.js
+lib/module/example.js.map
+
+# Config files
+.eslintrc*
+.prettierrc*
+.editorconfig
+tsconfig.json
+bob.config.js
+jest.config.*
+
+# IDE
+.vscode/
+.idea/
+
+# Git
+.git/
+.gitignore
+
+# Misc
+*.log
+.DS_Store

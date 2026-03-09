@@ -4,20 +4,13 @@ import type {
   OnboardingContextValue,
   OnboardingProviderProps,
   OnboardingStep,
-  OnboardingLabels,
   SafeAreaInsets,
   TargetInfo,
 } from '../types';
 import { OnboardingOverlay } from './onboarding-overlay';
+import { DEFAULT_LABELS } from '../constants/theme';
 
 const OnboardingContext = createContext<OnboardingContextValue | null>(null);
-
-const DEFAULT_LABELS: OnboardingLabels = {
-  next: 'Next',
-  back: 'Back',
-  skip: 'Skip',
-  finish: 'Done',
-};
 
 const DEFAULT_SAFE_AREA_INSETS: SafeAreaInsets = {
   top: 44,
