@@ -1,10 +1,9 @@
 module.exports = {
-  target: 'node',
   preset: 'react-native',
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   testMatch: ['**/__tests__/**/*.test.{ts,tsx}'],
   transformIgnorePatterns: [
-    'node_modules/(?!(@react-native|react-native|react-native-reanimated|react-native-svg)/)',
+    'node_modules/(?!((react-native.*)|@react-native/.*)/)',
   ],
   setupFilesAfterEnv: ['./jest.setup.js'],
   collectCoverageFrom: [
