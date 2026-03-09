@@ -3,7 +3,7 @@ import type { LayoutRectangle } from 'react-native';
 import type { SharedValue } from 'react-native-reanimated';
 
 export type Placement = 'top' | 'bottom' | 'left' | 'right' | 'auto';
-export type HighlightShape = 'rectangle' | 'circle';
+export type HighlightShape = 'rectangle';
 
 export interface OnboardingLabels {
   next?: string;

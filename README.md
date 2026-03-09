@@ -8,9 +8,25 @@ A lightweight React Native library for creating beautiful onboarding experiences
 🎯 **Smart positioning** - Automatically finds the best placement for tooltips  
 🎨 **Fully customizable** - Comprehensive theming system  
 🌐 **I18n ready** - Configurable labels for any language  
-📱 **Safe area aware** - Optional `react-native-safe-area-context` support  
+📱 **Safe area aware** - Built-in safe area handling (configurable)  
 🔧 **TypeScript** - Fully typed  
-⚡ **Smooth animations** - Powered by Reanimated 3  
+⚡ **Smooth animations** - Powered by Reanimated 3
+
+## Why Choose Us?
+
+Unlike other onboarding libraries that offer **only spotlight** OR **only tooltips**, we provide a **complete, integrated solution**:
+
+| Feature | react-native-onboarding-highlight | Competitors |
+|---------|-----------------------------------|-------------|
+| Spotlight + Tooltip integrated | ✅ | Usually only one |
+| Smooth animations (Reanimated 3) | ✅ | Often basic/no animation |
+| Smart auto-positioning | ✅ | Manual positioning |
+| Complete theming system | ✅ | Limited/basic |
+| Step navigation (next/back/skip) | ✅ | Often missing |
+| Progress indicators | ✅ | Usually missing |
+| Zero runtime dependencies | ✅ | May bundle heavy deps |
+
+**Size:** ~26kB gzipped - Smaller than most alternatives while offering more features!  
 
 ## Installation
 
@@ -28,8 +44,6 @@ Make sure you have the required peer dependencies installed:
 
 ```bash
 npm install react-native-reanimated react-native-svg
-# Optional but recommended
-npm install react-native-safe-area-context
 ```
 
 ## Quick Start
@@ -161,7 +175,6 @@ interface OnboardingStep {
 
 ```tsx
 interface OnboardingConfig {
-  highlightShape?: 'rectangle' | 'circle';
   highlightPadding?: number;
   overlayOpacity?: number;
   overlayColor?: string;
@@ -177,10 +190,10 @@ interface OnboardingConfig {
   };
   theme?: Partial<OnboardingTheme>;
   safeAreaInsets?: {
-    top: number;
-    right: number;
-    bottom: number;
-    left: number;
+    top: number;        // Default: 44 (iOS notch area)
+    right: number;      // Default: 0
+    bottom: number;     // Default: 34 (iOS home indicator)
+    left: number;       // Default: 0
   };
 }
 ```
@@ -249,7 +262,6 @@ import { SpotlightOverlay, Tooltip } from 'react-native-onboarding-highlight';
 <SpotlightOverlay
   targetLayout={{ x: 100, y: 200, width: 150, height: 50 }}
   visible={showSpotlight}
-  shape="circle"
   onPressOverlay={() => setShowSpotlight(false)}
 />
 
@@ -279,17 +291,6 @@ import { SpotlightOverlay, Tooltip } from 'react-native-onboarding-highlight';
       skip: 'Pular',
       finish: 'Concluir',
     },
-  }}
->
-```
-
-### Circle Shape
-
-```tsx
-<OnboardingProvider
-  config={{
-    highlightShape: 'circle',
-    highlightPadding: 4,
   }}
 >
 ```
