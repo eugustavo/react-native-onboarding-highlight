@@ -1,0 +1,53 @@
+name: Create Release on Tag
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version from tag
+        id: get_version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Generate Release Notes
+        id: release_notes
+        run: |
+          VERSION=${{ steps.get_version.outputs.version }}
+          
+          # Try to get release notes from .changeset or generate from commits
+          if [ -f ".changeset/version-${VERSION}.md" ]; then
+            # Extract content from changeset file (after the frontmatter)
+            tail -n +8 ".changeset/version-${VERSION}.md" > release_notes.md
+          else
+            # Generate from git commits
+            echo "## Changes in this Release" > release_notes.md
+            echo "" >> release_notes.md
+            git log --pretty=format:"- %s" $(git describe --tags --abbrev=0 HEAD~1)..HEAD >> release_notes.md || echo "- Version $VERSION" >> release_notes.md
+          fi
+          
+          cat release_notes.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: "v${{ steps.get_version.outputs.version }}"
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
