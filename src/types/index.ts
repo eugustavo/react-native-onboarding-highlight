@@ -37,6 +37,11 @@ export interface TargetInfo {
   layout: LayoutRectangle | null;
 }
 
+export interface StepCallbacks {
+  onSkip?: () => void | Promise<void>;
+  onComplete?: () => void | Promise<void>;
+}
+
 export interface OnboardingContextValue {
   isVisible: boolean;
   isClosing: boolean;
@@ -54,6 +59,8 @@ export interface OnboardingContextValue {
   goToStep: (index: number) => void;
   registerTarget: (id: string, ref: Measurable) => void;
   unregisterTarget: (id: string) => void;
+  registerStepCallbacks: (stepId: string, callbacks: StepCallbacks) => void;
+  unregisterStepCallbacks: (stepId: string) => void;
   onCloseComplete: () => void;
 }
 
@@ -154,8 +161,6 @@ export interface OnboardingConfig {
 
 export interface OnboardingProviderProps {
   children: React.ReactNode;
-  onComplete?: () => void | Promise<void>;
-  onSkip?: () => void | Promise<void>;
   config?: OnboardingConfig;
 }
 

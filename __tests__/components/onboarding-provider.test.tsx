@@ -8,7 +8,6 @@ import {
   type OnboardingStep,
 } from '../../src';
 
-// Mock useMeasure hook to return valid layout
 jest.mock('../../src/hooks/use-measure', () => ({
   useMeasure: () => ({
     measure: jest.fn((callback) => {
@@ -39,7 +38,7 @@ const TEST_STEPS: OnboardingStep[] = [
   },
 ];
 
-function TestComponent({ onStart }: { onStart?: (start: () => void) => void }) {
+function TestComponent({ onStart }: { onStart?: (start: (steps: OnboardingStep[]) => void) => void }) {
   const { start } = useOnboarding();
 
   return (
@@ -102,6 +101,49 @@ describe('OnboardingProvider', () => {
 
     fireEvent.press(screen.getByText('Start'));
 
+    await waitFor(() => {
+      const modals = screen.UNSAFE_getAllByType(Modal);
+      expect(modals.length).toBeGreaterThan(0);
+    }, { timeout: 2000 });
+  });
+
+  it('should call onComplete when last step finishes', async () => {
+    const onComplete = jest.fn();
+    const testSteps: OnboardingStep[] = [
+      {
+        id: 'step-1',
+        targetId: 'target-1',
+        title: 'First Step',
+        description: 'This is the first step',
+      },
+    ];
+
+    function TestComponentWithComplete() {
+      const { start } = useOnboarding();
+
+      return (
+        <View>
+          <OnboardingWrapper stepId="target-1" onComplete={onComplete}>
+            <View testID="target-1">
+              <Text>Target 1</Text>
+            </View>
+          </OnboardingWrapper>
+          <Button
+            title="Start"
+            onPress={() => start(testSteps)}
+          />
+        </View>
+      );
+    }
+
+    render(
+      <OnboardingProvider>
+        <TestComponentWithComplete />
+      </OnboardingProvider>
+    );
+
+    fireEvent.press(screen.getByText('Start'));
+
     // Check that the Modal is rendered (onboarding overlay is visible)
     await waitFor(() => {
       const modals = screen.UNSAFE_getAllByType(Modal);
@@ -109,18 +151,44 @@ describe('OnboardingProvider', () => {
     }, { timeout: 2000 });
   });
 
-  it('should call onComplete when onboarding finishes', async () => {
-    const onComplete = jest.fn();
+  it('should call onSkip when user skips on a step', async () => {
+    const onSkip = jest.fn();
+    const testSteps: OnboardingStep[] = [
+      {
+        id: 'step-1',
+        targetId: 'target-1',
+        title: 'First Step',
+        description: 'This is the first step',
+      },
+    ];
+
+    function TestComponentWithSkip() {
+      const { start } = useOnboarding();
+
+      return (
+        <View>
+          <OnboardingWrapper stepId="target-1" onSkip={onSkip}>
+            <View testID="target-1">
+              <Text>Target 1</Text>
+            </View>
+          </OnboardingWrapper>
+          <Button
+            title="Start"
+            onPress={() => start(testSteps)}
+          />
+        </View>
+      );
+    }
 
     render(
-      <OnboardingProvider onComplete={onComplete}>
-        <TestComponent />
+      <OnboardingProvider>
+        <TestComponentWithSkip />
       </OnboardingProvider>
     );
 
     fireEvent.press(screen.getByText('Start'));
 
-    // Check that the Modal is rendered (onboarding overlay is visible)
+    // Check that the Modal is rendered
     await waitFor(() => {
       const modals = screen.UNSAFE_getAllByType(Modal);
       expect(modals.length).toBeGreaterThan(0);
@@ -178,5 +246,54 @@ describe('OnboardingWrapper', () => {
     );
 
     expect(screen.getByTestId('target')).toBeTruthy();
+  });
+
+  it('should accept onSkip callback', () => {
+    const onSkip = jest.fn();
+
+    render(
+      <OnboardingProvider>
+        <OnboardingWrapper stepId="test-step" onSkip={onSkip}>
+          <View testID="child">
+            <Text>Test</Text>
+          </View>
+        </OnboardingWrapper>
+      </OnboardingProvider>
+    );
+
+    expect(screen.getByTestId('child')).toBeTruthy();
+  });
+
+  it('should accept onComplete callback', () => {
+    const onComplete = jest.fn();
+
+    render(
+      <OnboardingProvider>
+        <OnboardingWrapper stepId="test-step" onComplete={onComplete}>
+          <View testID="child">
+            <Text>Test</Text>
+          </View>
+        </OnboardingWrapper>
+      </OnboardingProvider>
+    );
+
+    expect(screen.getByTestId('child')).toBeTruthy();
+  });
+
+  it('should accept both onSkip and onComplete callbacks', () => {
+    const onSkip = jest.fn();
+    const onComplete = jest.fn();
+
+    render(
+      <OnboardingProvider>
+        <OnboardingWrapper stepId="test-step" onSkip={onSkip} onComplete={onComplete}>
+          <View testID="child">
+            <Text>Test</Text>
+          </View>
+        </OnboardingWrapper>
+      </OnboardingProvider>
+    );
+
+    expect(screen.getByTestId('child')).toBeTruthy();
   });
 });

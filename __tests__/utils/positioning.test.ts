@@ -146,7 +146,6 @@ describe('positioning utils', () => {
       });
 
       expect(result.placement).toBe('left');
-      // Position is clamped to minimum 16px (safe area + padding)
       expect(result.x).toBeGreaterThanOrEqual(16);
       expect(result.arrowX).toBeGreaterThan(0);
     });
@@ -164,7 +163,6 @@ describe('positioning utils', () => {
       });
 
       expect(result.placement).toBe('right');
-      // Position is clamped to ensure tooltip stays within screen bounds
       const expectedX = mockTargetLayout.x + mockTargetLayout.width + 12 + 12; // 224
       const maxX = SCREEN_WIDTH - 200 - DEFAULT_SAFE_AREA.right - 16; // 159
       expect(result.x).toBe(Math.min(expectedX, maxX));

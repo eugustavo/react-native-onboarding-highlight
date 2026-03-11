@@ -6,6 +6,7 @@ import type {
   OnboardingStep,
   SafeAreaInsets,
   TargetInfo,
+  StepCallbacks,
 } from '../types';
 import { OnboardingOverlay } from './onboarding-overlay';
 import { DEFAULT_LABELS } from '../constants/theme';
@@ -21,8 +22,6 @@ const DEFAULT_SAFE_AREA_INSETS: SafeAreaInsets = {
 
 export function OnboardingProvider({
   children,
-  onComplete,
-  onSkip,
   config,
 }: OnboardingProviderProps) {
   const [isVisible, setIsVisible] = useState(false);
@@ -33,6 +32,7 @@ export function OnboardingProvider({
   const [isTransitioning, setIsTransitioning] = useState(false);
 
   const targetsRef = useRef<Map<string, TargetInfo>>(new Map());
+  const stepCallbacksRef = useRef<Map<string, StepCallbacks>>(new Map());
   const measureTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const safeAreaInsets = useMemo((): SafeAreaInsets => {
@@ -131,12 +131,25 @@ export function OnboardingProvider({
     setIsClosing(false);
     setTargetLayout(null);
 
+    const currentStep = steps[currentStepIndex];
+    if (!currentStep) return;
+
+    const callbacks = stepCallbacksRef.current.get(currentStep.id);
+
     if (currentStepIndex >= steps.length - 1) {
-      await onComplete?.();
+      await callbacks?.onComplete?.();
     } else {
-      await onSkip?.();
+      await callbacks?.onSkip?.();
     }
-  }, [currentStepIndex, steps.length, onComplete, onSkip]);
+  }, [currentStepIndex, steps]);
+
+  const registerStepCallbacks = useCallback((stepId: string, callbacks: StepCallbacks) => {
+    stepCallbacksRef.current.set(stepId, callbacks);
+  }, []);
+
+  const unregisterStepCallbacks = useCallback((stepId: string) => {
+    stepCallbacksRef.current.delete(stepId);
+  }, []);
 
   const registerTarget = useCallback((id: string, ref: { measure: TargetInfo['ref']['measure'] }) => {
     targetsRef.current.set(id, { ref, layout: null });
@@ -162,6 +175,8 @@ export function OnboardingProvider({
     goToStep,
     registerTarget,
     unregisterTarget,
+    registerStepCallbacks,
+    unregisterStepCallbacks,
     onCloseComplete,
   };
 

@@ -64,6 +64,7 @@ const steps = [
     title: 'Welcome!',
     description: 'This is your app title',
     placement: 'bottom',
+    showSkip: true,
   },
   {
     id: 'action',
@@ -85,11 +86,14 @@ function HomeScreen() {
 
   return (
     <View>
-      <OnboardingWrapper stepId="title">
+      <OnboardingWrapper stepId="title" onSkip={() => console.log('Skipped on title')}>
         <Text>My App</Text>
       </OnboardingWrapper>
 
-      <OnboardingWrapper stepId="button">
+      <OnboardingWrapper 
+        stepId="button" 
+        onComplete={() => console.log('Done!')}
+      >
         <Button title="Start" onPress={() => {}} />
       </OnboardingWrapper>
     </View>
@@ -98,10 +102,7 @@ function HomeScreen() {
 
 export default function App() {
   return (
-    <OnboardingProvider
-      onComplete={() => console.log('Done!')}
-      onSkip={() => console.log('Skipped')}
-    >
+    <OnboardingProvider>
       <HomeScreen />
     </OnboardingProvider>
   );
@@ -117,8 +118,6 @@ The context provider that wraps your app.
 ```tsx
 interface OnboardingProviderProps {
   children: React.ReactNode;
-  onComplete?: () => void | Promise<void>;
-  onSkip?: () => void | Promise<void>;
   config?: OnboardingConfig;
 }
 ```
@@ -129,8 +128,10 @@ Wraps target elements that will be highlighted.
 
 ```tsx
 interface OnboardingWrapperProps {
-  stepId: string;  // Unique identifier for this target
+  stepId: string;                          // Unique identifier for this target
   children: React.ReactNode;
+  onSkip?: () => void | Promise<void>;     // Called when user skips on this step
+  onComplete?: () => void | Promise<void>; // Called when onboarding completes on this step (last step)
 }
 ```
 
@@ -161,7 +162,7 @@ interface OnboardingStep {
   targetId: string;           // Must match OnboardingWrapper's stepId
   title: string;
   description: string;
-  placement?: 'top' | 'bottom' | 'left' | 'right' | 'auto';
+  placement?: 'top' | 'bottom' | 'left' | 'right' | 'auto';  // Tooltip position (default: 'auto')
   offset?: number;            // Distance from target (default: 12)
   showSkip?: boolean;         // Show skip button (default: true)
   showBack?: boolean;         // Show back button (default: true)
@@ -302,22 +303,26 @@ Store progress using AsyncStorage or similar:
 ```tsx
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+const steps = [
+  { id: 'welcome', targetId: 'title', title: 'Welcome!', description: '...' },
+  { id: 'finish', targetId: 'button', title: 'Get Started', description: '...' },
+];
+
+async function onCompleteOnboarding() {
+  await AsyncStorage.setItem('onboarding_completed', 'true');
+}
+
 function App() {
-  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useState(false);
-
-  useEffect(() => {
-    AsyncStorage.getItem('onboarding_completed').then((value) => {
-      setHasCompletedOnboarding(value === 'true');
-    });
-  }, []);
-
   return (
-    <OnboardingProvider
-      onComplete={async () => {
-        await AsyncStorage.setItem('onboarding_completed', 'true');
-      }}
-    >
-      {> children <}
+    <OnboardingProvider>
+      <View>
+        <OnboardingWrapper
+          stepId="button"
+          onComplete={onCompleteOnboarding}
+        >
+          <Button title="Start" onPress={() => {}} />
+        </OnboardingWrapper>
+      </View>
     </OnboardingProvider>
   );
 }

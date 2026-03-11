@@ -1,5 +1,5 @@
 export { OnboardingProvider, useOnboarding } from './components/onboarding-provider';
-export { OnboardingWrapper } from './components/onboarding-wrapper';
+export { OnboardingWrapper, type OnboardingWrapperProps } from './components/onboarding-wrapper';
 export { OnboardingOverlay } from './components/onboarding-overlay';
 export { SpotlightOverlay } from './components/spotlight-overlay';
 export { Tooltip } from './components/tooltip';
@@ -24,4 +24,5 @@ export type {
   Measurable,
   TargetInfo,
   AnimationConfig,
+  StepCallbacks,
 } from './types';
