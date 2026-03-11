@@ -51,21 +51,25 @@ function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      <OnboardingWrapper stepId="title">
+      <OnboardingWrapper stepId="title" onSkip={() => console.log('Skipped on title')}>
         <View style={styles.header}>
           <Text style={styles.title}>My App</Text>
         </View>
       </OnboardingWrapper>
 
-      <OnboardingWrapper stepId="button-1">
+      <OnboardingWrapper stepId="button-1" onSkip={() => console.log('Skipped on button 1')}>
         <Button title="Primary Action" onPress={() => {}} />
       </OnboardingWrapper>
 
-      <OnboardingWrapper stepId="button-2">
+      <OnboardingWrapper stepId="button-2" onSkip={() => console.log('Skipped on button 2')}>
         <Button title="Secondary Action" onPress={() => {}} />
       </OnboardingWrapper>
 
-      <OnboardingWrapper stepId="help-button">
+      <OnboardingWrapper
+        stepId="help-button"
+        onComplete={() => console.log('Onboarding completed!')}
+        onSkip={() => console.log('Onboarding skipped')}
+      >
         <Button title="?" onPress={() => {}} />
       </OnboardingWrapper>
     </View>
@@ -86,8 +90,6 @@ export default function App() {
           finish: 'Done',
         },
       }}
-      onComplete={() => console.log('Onboarding completed!')}
-      onSkip={() => console.log('Onboarding skipped')}
     >
       <HomeScreen />
     </OnboardingProvider>
