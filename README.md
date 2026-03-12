@@ -46,6 +46,12 @@ Make sure you have the required peer dependencies installed:
 npm install react-native-reanimated react-native-svg
 ```
 
+> **⚠️ Note for Reanimated 4.x users:** If you're using `react-native-reanimated` version 4.x or higher, you'll also need to install `react-native-worklets`:
+> ```bash
+> npm install react-native-worklets
+> ```
+> This is a new requirement introduced in Reanimated 4.x. See the [Reanimated troubleshooting guide](https://docs.swmansion.com/react-native-reanimated/docs/guides/troubleshooting/#unable-to-find-a-specification-for-rnworklets-depended-upon-by-rnreanimated) for more details.
+
 ## Quick Start
 
 ```tsx

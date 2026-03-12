@@ -134,7 +134,7 @@ export function OnboardingProvider({
     const currentStep = steps[currentStepIndex];
     if (!currentStep) return;
 
-    const callbacks = stepCallbacksRef.current.get(currentStep.id);
+    const callbacks = stepCallbacksRef.current.get(currentStep.targetId);
 
     if (currentStepIndex >= steps.length - 1) {
       await callbacks?.onComplete?.();
