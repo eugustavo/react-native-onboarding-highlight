@@ -44,6 +44,12 @@ jobs:
             echo "has_changesets=false" >> $GITHUB_OUTPUT
           fi
 
+      - name: Configure npm
+        if: steps.changesets.outputs.has_changesets == 'true'
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+          npm config set registry https://registry.npmjs.org/
+
       - name: Publish to npm
         if: steps.changesets.outputs.has_changesets == 'true'
         run: npm publish --access public
