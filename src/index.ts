@@ -7,6 +7,7 @@ export { Tooltip } from './components/tooltip';
 export { useMeasure } from './hooks/use-measure';
 
 export { DEFAULT_THEME, DEFAULT_LABELS } from './constants/theme';
+export { mergeTheme } from './utils/theme';
 
 export type {
   OnboardingStep,

@@ -4,12 +4,14 @@ import type {
   OnboardingContextValue,
   OnboardingProviderProps,
   OnboardingStep,
+  OnboardingTheme,
   SafeAreaInsets,
   TargetInfo,
   StepCallbacks,
 } from '../types';
 import { OnboardingOverlay } from './onboarding-overlay';
-import { DEFAULT_LABELS } from '../constants/theme';
+import { DEFAULT_LABELS, DEFAULT_THEME } from '../constants/theme';
+import { mergeTheme } from '../utils/theme';
 
 const OnboardingContext = createContext<OnboardingContextValue | null>(null);
 
@@ -37,10 +39,20 @@ export function OnboardingProvider({
 
   const safeAreaInsets = useMemo((): SafeAreaInsets => {
     if (config?.safeAreaInsets) {
-      return config.safeAreaInsets;
+      return {
+        ...DEFAULT_SAFE_AREA_INSETS,
+        ...config.safeAreaInsets,
+      };
     }
     return DEFAULT_SAFE_AREA_INSETS;
   }, [config?.safeAreaInsets]);
+
+  const theme = useMemo((): OnboardingTheme => {
+    if (config?.theme) {
+      return mergeTheme(DEFAULT_THEME, config.theme);
+    }
+    return DEFAULT_THEME;
+  }, [config?.theme]);
 
   const currentStep = steps[currentStepIndex] || null;
   const totalSteps = steps.length;
@@ -215,7 +227,7 @@ export function OnboardingProvider({
           animationDuration={config?.animationDuration ?? 300}
           onPressOverlay={config?.closeOnOverlayPress ? skip : undefined}
           onCloseComplete={onCloseComplete}
-          theme={config?.theme}
+          theme={theme}
           labels={labels}
           safeAreaInsets={safeAreaInsets}
         />

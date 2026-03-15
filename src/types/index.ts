@@ -5,11 +5,16 @@ import type { SharedValue } from 'react-native-reanimated';
 export type Placement = 'top' | 'bottom' | 'left' | 'right' | 'auto';
 export type HighlightShape = 'rectangle';
 
+// Utility type to make all properties deeply partial
+type DeepPartial<T> = {
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+};
+
 export interface OnboardingLabels {
-  next?: string;
-  back?: string;
-  skip?: string;
-  finish?: string;
+  next: string;
+  back: string;
+  skip: string;
+  finish: string;
 }
 
 export interface OnboardingStep {
@@ -154,9 +159,9 @@ export interface OnboardingConfig {
   shadowColor?: string;
   animationDuration?: number;
   closeOnOverlayPress?: boolean;
-  labels?: OnboardingLabels;
-  theme?: Partial<OnboardingTheme>;
-  safeAreaInsets?: SafeAreaInsets;
+  labels?: Partial<OnboardingLabels>;
+  theme?: DeepPartial<OnboardingTheme>;
+  safeAreaInsets?: Partial<SafeAreaInsets>;
 }
 
 export interface OnboardingProviderProps {
@@ -191,9 +196,9 @@ export interface OnboardingOverlayProps {
   animationDuration?: number;
   onPressOverlay?: (() => void) | undefined;
   onCloseComplete?: () => void;
-  theme?: Partial<OnboardingTheme>;
-  labels?: OnboardingLabels;
-  safeAreaInsets?: SafeAreaInsets;
+  theme: OnboardingTheme;
+  labels: Partial<OnboardingLabels>;
+  safeAreaInsets: SafeAreaInsets;
 }
 
 export interface PositionResult {

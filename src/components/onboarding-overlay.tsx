@@ -18,7 +18,7 @@ import Animated, {
 import Svg, { Path, Rect } from 'react-native-svg';
 import type { OnboardingOverlayProps } from '../types';
 import { calculatePosition, estimateTooltipSize } from '../utils/positioning';
-import { DEFAULT_THEME, DEFAULT_LABELS } from '../constants/theme';
+import { DEFAULT_LABELS } from '../constants/theme';
 
 const HIGHLIGHT_PADDING = 8;
 const DEFAULT_ANIMATION_DURATION = 400;
@@ -60,16 +60,7 @@ export function OnboardingOverlay({
   const tooltipOpacity = useSharedValue(0);
   const tooltipTranslateY = useSharedValue(0);
 
-  const theme = useMemo(() => {
-    if (!customTheme) return DEFAULT_THEME;
-    return {
-      overlay: { ...DEFAULT_THEME.overlay, ...customTheme.overlay },
-      highlight: { ...DEFAULT_THEME.highlight, ...customTheme.highlight },
-      tooltip: { ...DEFAULT_THEME.tooltip, ...customTheme.tooltip },
-      actions: { ...DEFAULT_THEME.actions, ...customTheme.actions },
-      progress: { ...DEFAULT_THEME.progress, ...customTheme.progress },
-    };
-  }, [customTheme]);
+  const theme = customTheme;
 
   const labels = useMemo(() => {
     return { ...DEFAULT_LABELS, ...customLabels };

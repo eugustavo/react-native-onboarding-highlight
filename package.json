@@ -1,6 +1,6 @@
 {
   "name": "react-native-onboarding-highlight",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "React Native onboarding library with spotlight highlighting and animated tooltips",
   "main": "lib/commonjs/index.js",
   "module": "lib/module/index.js",
