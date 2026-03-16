@@ -44,18 +44,6 @@ jobs:
             echo "has_changesets=false" >> $GITHUB_OUTPUT
           fi
 
-      - name: Configure npm
-        if: steps.changesets.outputs.has_changesets == 'true'
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
-          npm config set registry https://registry.npmjs.org/
-
-      - name: Publish to npm
-        if: steps.changesets.outputs.has_changesets == 'true'
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-
       - name: Get version
         if: steps.changesets.outputs.has_changesets == 'true'
         id: get_version
@@ -71,15 +59,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Remove changeset files
-        if: steps.changesets.outputs.has_changesets == 'true'
-        run: rm -f .changeset/*.md
-
-      - name: Commit changeset removal
+      - name: Summary
         if: steps.changesets.outputs.has_changesets == 'true'
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add .changeset/
-          git commit -m "chore: remove changeset after release [skip ci]" || echo "No changes to commit"
-          git push
+          echo "✅ GitHub Release v${{ steps.get_version.outputs.version }} created successfully!"
+          echo ""
+          echo "Next steps (manual):"
+          echo "1. Build the package: npm run build"
+          echo "2. Publish to npm: npm publish --access public"
