@@ -11,14 +11,9 @@ export function useMeasure() {
         return;
       }
 
-      ref.current.measure(
-        (_x: number, _y: number, width: number, height: number, pageX: number, pageY: number) => {
-          resolve({
-            x: pageX,
-            y: pageY,
-            width,
-            height,
-          });
+      ref.current.measureInWindow(
+        (x: number, y: number, width: number, height: number) => {
+          resolve({ x, y, width, height });
         }
       );
     });

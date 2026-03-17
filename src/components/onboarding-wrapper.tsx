@@ -9,7 +9,7 @@ export interface OnboardingWrapperProps extends ViewProps {
   onComplete?: () => void | Promise<void>;
 }
 
-export function OnboardingWrapper({ stepId, children, onSkip, onComplete, ...viewProps }: OnboardingWrapperProps) {
+export function OnboardingWrapper({ stepId, children, onSkip, onComplete, style, ...viewProps }: OnboardingWrapperProps) {
   const { registerTarget, unregisterTarget, registerStepCallbacks, unregisterStepCallbacks } = useOnboarding();
   const viewRef = useRef<View>(null);
 
@@ -27,7 +27,7 @@ export function OnboardingWrapper({ stepId, children, onSkip, onComplete, ...vie
   }, [stepId, registerTarget, unregisterTarget, registerStepCallbacks, unregisterStepCallbacks, onSkip, onComplete]);
 
   return (
-    <View ref={viewRef} {...viewProps} collapsable={false}>
+    <View ref={viewRef} {...viewProps} style={[{ alignSelf: 'stretch' }, style]} collapsable={false}>
       {children}
     </View>
   );

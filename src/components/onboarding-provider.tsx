@@ -64,14 +64,9 @@ export function OnboardingProvider({
       return;
     }
 
-    target.ref.measure(
-      (_x: number, _y: number, width: number, height: number, pageX: number, pageY: number) => {
-        setTargetLayout({
-          x: pageX,
-          y: pageY,
-          width,
-          height,
-        });
+    target.ref.measureInWindow(
+      (x: number, y: number, width: number, height: number) => {
+        setTargetLayout({ x, y, width, height });
       }
     );
   }, []);
@@ -163,7 +158,7 @@ export function OnboardingProvider({
     stepCallbacksRef.current.delete(stepId);
   }, []);
 
-  const registerTarget = useCallback((id: string, ref: { measure: TargetInfo['ref']['measure'] }) => {
+  const registerTarget = useCallback((id: string, ref: TargetInfo['ref']) => {
     targetsRef.current.set(id, { ref, layout: null });
   }, []);
 

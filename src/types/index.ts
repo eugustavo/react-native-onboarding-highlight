@@ -35,6 +35,9 @@ export interface Measurable {
   measure: (
     callback: (x: number, y: number, width: number, height: number, pageX: number, pageY: number) => void
   ) => void;
+  measureInWindow: (
+    callback: (x: number, y: number, width: number, height: number) => void
+  ) => void;
 }
 
 export interface TargetInfo {
