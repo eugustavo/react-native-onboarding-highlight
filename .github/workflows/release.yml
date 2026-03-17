@@ -49,21 +49,66 @@ jobs:
         id: get_version
         run: echo "version=$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
 
-      - name: Create GitHub Release
+      - name: Check if tag already exists
         if: steps.changesets.outputs.has_changesets == 'true'
+        id: check_tag
+        run: |
+          VERSION=${{ steps.get_version.outputs.version }}
+          if git rev-parse "v${VERSION}" >/dev/null 2>&1; then
+            echo "tag_exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "tag_exists=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Extract release notes from CHANGELOG.md
+        if: steps.changesets.outputs.has_changesets == 'true' && steps.check_tag.outputs.tag_exists == 'false'
+        id: release_notes
+        run: |
+          VERSION=${{ steps.get_version.outputs.version }}
+
+          # Extract the section for this version from CHANGELOG.md
+          # Captures everything between ## [VERSION] and the next ## [
+          awk "/^## \[${VERSION}\]/{found=1; next} found && /^## \[/{exit} found{print}" CHANGELOG.md > release_notes.md
+
+          # Remove leading blank lines
+          sed -i '/./,$!d' release_notes.md
+
+          # Append install section if not already present
+          if ! grep -q "## Install" release_notes.md; then
+            echo "" >> release_notes.md
+            echo "## Install" >> release_notes.md
+            echo '```bash' >> release_notes.md
+            echo "npm install react-native-onboarding-highlight@${VERSION}" >> release_notes.md
+            echo "# or" >> release_notes.md
+            echo "yarn add react-native-onboarding-highlight@${VERSION}" >> release_notes.md
+            echo '```' >> release_notes.md
+          fi
+
+          echo "--- Release notes preview ---"
+          cat release_notes.md
+
+      - name: Create Git tag
+        if: steps.changesets.outputs.has_changesets == 'true' && steps.check_tag.outputs.tag_exists == 'false'
+        run: |
+          VERSION=${{ steps.get_version.outputs.version }}
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a "v${VERSION}" -m "Release v${VERSION}"
+          git push origin "v${VERSION}"
+
+      - name: Create GitHub Release
+        if: steps.changesets.outputs.has_changesets == 'true' && steps.check_tag.outputs.tag_exists == 'false'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: v${{ steps.get_version.outputs.version }}
           name: v${{ steps.get_version.outputs.version }}
-          generate_release_notes: true
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Summary
-        if: steps.changesets.outputs.has_changesets == 'true'
+        if: steps.changesets.outputs.has_changesets == 'true' && steps.check_tag.outputs.tag_exists == 'false'
         run: |
           echo "✅ GitHub Release v${{ steps.get_version.outputs.version }} created successfully!"
-          echo ""
-          echo "Next steps (manual):"
-          echo "1. Build the package: npm run build"
-          echo "2. Publish to npm: npm publish --access public"
