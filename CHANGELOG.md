@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.1] - 2026-03-18
+
+### Fixed
+
+- **Restored tooltip header with title and progress dots** — Fixed regression where the title and progress indicator were missing from the tooltip in `OnboardingOverlay`.
+
+### Install
+
+```bash
+npm install react-native-onboarding-highlight@1.3.1
+# or
+yarn add react-native-onboarding-highlight@1.3.1
+```
+
 ## [1.3.0] - 2026-03-18
 
 ### Fixed
@@ -122,7 +136,8 @@ yarn add react-native-onboarding-highlight@1.2.0
 - Customizable themes and labels
 - Support for safe area insets
 
-[Unreleased]: https://github.com/eugustavo/react-native-onboarding-highlight/compare/v1.3.0...HEAD
+[Unreleased]: https://github.com/eugustavo/react-native-onboarding-highlight/compare/v1.3.1...HEAD
+[1.3.1]: https://github.com/eugustavo/react-native-onboarding-highlight/compare/v1.3.0...v1.3.1
 [1.3.0]: https://github.com/eugustavo/react-native-onboarding-highlight/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/eugustavo/react-native-onboarding-highlight/compare/v1.1.2...v1.2.0
 [1.1.2]: https://github.com/eugustavo/react-native-onboarding-highlight/compare/v1.1.1...v1.1.2

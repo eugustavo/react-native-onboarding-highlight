@@ -363,6 +363,32 @@ export function OnboardingOverlay({
             pointerEvents="auto"
           >
             <View style={styles.content}>
+              <View style={styles.header}>
+                <View style={styles.progressContainer}>
+                  {Array.from({ length: tooltipProps.totalSteps }).map((_, index) => (
+                    <View
+                      key={index}
+                      style={[
+                        styles.progressDot,
+                        {
+                          width: theme.progress.dotSize,
+                          height: theme.progress.dotSize,
+                          borderRadius: theme.progress.dotSize / 2,
+                          marginRight: index < tooltipProps.totalSteps - 1 ? theme.progress.dotSpacing : 0,
+                          backgroundColor:
+                            index === tooltipContent.stepNumber
+                              ? theme.progress.activeColor
+                              : theme.progress.inactiveColor,
+                        },
+                      ]}
+                    />
+                  ))}
+                </View>
+                <Text style={[styles.title, { color: theme.tooltip.titleColor }]} numberOfLines={2}>
+                  {tooltipContent.title}
+                </Text>
+              </View>
+
               <Text
                 style={[styles.description, { color: theme.tooltip.descriptionColor }]}
                 numberOfLines={5}
