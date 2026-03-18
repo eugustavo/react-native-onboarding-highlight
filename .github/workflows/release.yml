@@ -108,7 +108,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Publish to npm
+        if: steps.changesets.outputs.has_changesets == 'true' && steps.check_tag.outputs.tag_exists == 'false'
+        run: npm publish --ignore-scripts
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
       - name: Summary
         if: steps.changesets.outputs.has_changesets == 'true' && steps.check_tag.outputs.tag_exists == 'false'
         run: |
-          echo "✅ GitHub Release v${{ steps.get_version.outputs.version }} created successfully!"
+          echo "✅ Released v${{ steps.get_version.outputs.version }} to GitHub and npm!"
