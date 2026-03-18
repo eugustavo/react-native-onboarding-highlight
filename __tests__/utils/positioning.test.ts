@@ -30,7 +30,7 @@ describe('positioning utils', () => {
       const result = estimateTooltipSize('Short', 'Description');
       expect(result.width).toBe(280);
       expect(result.height).toBeGreaterThan(0);
-      expect(result.height).toBeLessThanOrEqual(300);
+      expect(result.height).toBeLessThanOrEqual(280);
     });
 
     it('should calculate height based on text length', () => {
@@ -43,12 +43,12 @@ describe('positioning utils', () => {
       expect(longResult.height).toBeGreaterThan(shortResult.height);
     });
 
-    it('should cap height at 300px', () => {
+    it('should cap height at 280px', () => {
       const result = estimateTooltipSize(
         'A'.repeat(1000),
         'B'.repeat(1000)
       );
-      expect(result.height).toBe(300);
+      expect(result.height).toBe(280);
     });
   });
 
