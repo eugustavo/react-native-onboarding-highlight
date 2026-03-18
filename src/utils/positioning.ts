@@ -9,6 +9,14 @@ const ARROW_SIZE = 12;
 const TOOLTIP_MIN_WIDTH = 280;
 const TOOLTIP_HEIGHT_ESTIMATE = 180;
 
+const TOOLTIP_HEADER_HEIGHT = 50;
+const TOOLTIP_ACTIONS_HEIGHT = 50;
+const TOOLTIP_LINE_HEIGHT_TITLE = 24;
+const TOOLTIP_LINE_HEIGHT_DESC = 20;
+const TOOLTIP_CHARS_PER_LINE_TITLE = 30;
+const TOOLTIP_CHARS_PER_LINE_DESC = 35;
+const TOOLTIP_MAX_HEIGHT = 280;
+
 interface CalculatePositionParams {
   targetLayout: LayoutRectangle;
   tooltipWidth: number;
@@ -159,14 +167,14 @@ export function estimateTooltipSize(title: string, description: string): {
   height: number;
 } {
   const estimatedHeight =
-    60 +
-    Math.ceil(title.length / 30) * 24 +
-    Math.ceil(description.length / 35) * 20 +
-    60;
+    TOOLTIP_HEADER_HEIGHT +
+    Math.ceil(title.length / TOOLTIP_CHARS_PER_LINE_TITLE) * TOOLTIP_LINE_HEIGHT_TITLE +
+    Math.ceil(description.length / TOOLTIP_CHARS_PER_LINE_DESC) * TOOLTIP_LINE_HEIGHT_DESC +
+    TOOLTIP_ACTIONS_HEIGHT;
 
   return {
     width: TOOLTIP_MIN_WIDTH,
-    height: Math.min(estimatedHeight, 300),
+    height: Math.min(estimatedHeight, TOOLTIP_MAX_HEIGHT),
   };
 }
 

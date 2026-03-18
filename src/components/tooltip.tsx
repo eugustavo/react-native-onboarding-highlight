@@ -155,9 +155,6 @@ export function Tooltip({
 
         <View style={styles.content}>
           <View style={styles.header}>
-            <Text style={[styles.title, { color: theme.tooltip.titleColor }]} numberOfLines={2}>
-              {title}
-            </Text>
             <View style={styles.progressContainer}>
               {Array.from({ length: totalSteps }).map((_, index) => (
                 <View
@@ -178,6 +175,9 @@ export function Tooltip({
                 />
               ))}
             </View>
+            <Text style={[styles.title, { color: theme.tooltip.titleColor }]} numberOfLines={2}>
+              {title}
+            </Text>
           </View>
 
           <Text style={[styles.description, { color: theme.tooltip.descriptionColor }]} numberOfLines={4}>
@@ -248,20 +248,18 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexDirection: 'column',
     marginBottom: 8,
   },
   title: {
     fontSize: 18,
     fontWeight: '600',
-    flex: 1,
-    marginRight: 12,
   },
   progressContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    alignSelf: 'center',
+    marginBottom: 14,
   },
   progressDot: {
     opacity: 0.8,

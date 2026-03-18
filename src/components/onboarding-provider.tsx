@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useMemo, useRef, useState } from 'react';
+import { InteractionManager } from 'react-native';
 import type { LayoutRectangle } from 'react-native';
 import type {
   OnboardingContextValue,
@@ -12,6 +13,11 @@ import type {
 import { OnboardingOverlay } from './onboarding-overlay';
 import { DEFAULT_LABELS, DEFAULT_THEME } from '../constants/theme';
 import { mergeTheme } from '../utils/theme';
+
+const MEASURE_INITIAL_DELAY_MS = 300;
+const MEASURE_TRANSITION_DELAY_MS = 150;
+const MEASURE_RETRY_DELAY_MS = 200;
+const MEASURE_MAX_RETRIES = 3;
 
 const OnboardingContext = createContext<OnboardingContextValue | null>(null);
 
@@ -57,16 +63,30 @@ export function OnboardingProvider({
   const currentStep = steps[currentStepIndex] || null;
   const totalSteps = steps.length;
 
-  const measureTarget = useCallback((targetId: string) => {
+  const measureTarget = useCallback((targetId: string, retries = MEASURE_MAX_RETRIES) => {
     const target = targetsRef.current.get(targetId);
     if (!target?.ref) {
       setTargetLayout(null);
       return;
     }
 
-    target.ref.measureInWindow(
-      (x: number, y: number, width: number, height: number) => {
-        setTargetLayout({ x, y, width, height });
+    // Usar measure() com pageX/pageY para obter coordenadas absolutas na janela nativa.
+    // measureInWindow() desconsidera a Status Bar no Android quando o Modal usa
+    // statusBarTranslucent={true}, causando deslocamento no spotlight.
+    target.ref.measure(
+      (_x: number, _y: number, width: number, height: number, pageX: number, pageY: number) => {
+        const hasValidLayout = width > 0 && height > 0;
+        const hasValidPosition = pageY > 0;
+
+        if ((!hasValidLayout || !hasValidPosition) && retries > 0) {
+          measureTimeoutRef.current = setTimeout(
+            () => measureTarget(targetId, retries - 1),
+            MEASURE_RETRY_DELAY_MS
+          );
+          return;
+        }
+
+        setTargetLayout({ x: pageX, y: pageY, width, height });
       }
     );
   }, []);
@@ -81,11 +101,13 @@ export function OnboardingProvider({
 
     const firstStep = newSteps[0];
     if (firstStep) {
-      measureTimeoutRef.current = setTimeout(() => {
-        measureTarget(firstStep.targetId);
-        setIsTransitioning(false);
-        firstStep.onShow?.();
-      }, 100);
+      InteractionManager.runAfterInteractions(() => {
+        measureTimeoutRef.current = setTimeout(() => {
+          measureTarget(firstStep.targetId);
+          setIsTransitioning(false);
+          firstStep.onShow?.();
+        }, MEASURE_INITIAL_DELAY_MS);
+      });
     }
   }, [measureTarget]);
 
@@ -103,7 +125,7 @@ export function OnboardingProvider({
           measureTarget(step.targetId);
           setIsTransitioning(false);
           step.onShow?.();
-        }, 150);
+        }, MEASURE_TRANSITION_DELAY_MS);
       }
     },
     [steps, measureTarget]

@@ -363,40 +363,15 @@ export function OnboardingOverlay({
             pointerEvents="auto"
           >
             <View style={styles.content}>
-              <View style={styles.header}>
-                <Text style={[styles.title, { color: theme.tooltip.titleColor }]} numberOfLines={2}>
-                  {tooltipContent.title}
-                </Text>
-                <View style={styles.progressContainer}>
-                  {Array.from({ length: tooltipProps.totalSteps }).map((_, index) => (
-                    <View
-                      key={index}
-                      style={[
-                        styles.progressDot,
-                        {
-                          width: theme.progress.dotSize,
-                          height: theme.progress.dotSize,
-                          borderRadius: theme.progress.dotSize / 2,
-                          marginRight: index < tooltipProps.totalSteps - 1 ? theme.progress.dotSpacing : 0,
-                          backgroundColor:
-                            index === tooltipContent.stepNumber
-                              ? theme.progress.activeColor
-                              : theme.progress.inactiveColor,
-                        },
-                      ]}
-                    />
-                  ))}
-                </View>
-              </View>
-
               <Text
                 style={[styles.description, { color: theme.tooltip.descriptionColor }]}
-                numberOfLines={4}
+                numberOfLines={5}
               >
                 {tooltipContent.description}
               </Text>
+            </View>
 
-              <View style={styles.actions}>
+            <View style={styles.actions}>
                 {tooltipProps.showBack && tooltipContent.stepNumber > 0 && tooltipProps.onPrev ? (
                   <Pressable
                     onPress={tooltipProps.onPrev}
@@ -450,7 +425,6 @@ export function OnboardingOverlay({
                   </Text>
                 </Pressable>
               </View>
-            </View>
           </Animated.View>
         )}
       </View>
@@ -469,23 +443,21 @@ const styles = StyleSheet.create({
     maxWidth: 300 - 32,
   },
   content: {
-    marginTop: 8,
+    marginTop: 2,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
+    flexDirection: 'column',
     marginBottom: 8,
   },
   title: {
     fontSize: 18,
     fontWeight: '600',
-    flex: 1,
-    marginRight: 12,
   },
   progressContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    alignSelf: 'center',
+    marginBottom: 14,
   },
   progressDot: {
     opacity: 0.8,
