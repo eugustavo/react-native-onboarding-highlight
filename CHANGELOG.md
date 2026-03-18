@@ -7,6 +7,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.3.0] - 2026-03-18
+
+### Fixed
+
+- **Android spotlight positioning with `statusBarTranslucent` Modal** — Changed measurement method from `measureInWindow()` back to `measure()` using `pageX/pageY` coordinates. When a Modal has `statusBarTranslucent={true}`, `measureInWindow()` returns Y coordinates that don't account for the status bar offset, causing the spotlight to appear misaligned. The `measure()` callback with `pageX/pageY` provides correct absolute coordinates in all scenarios.
+
+- **Invalid layout measurements** — Added retry logic (up to 3 attempts with 100ms delay) when target measurements return invalid values (width/height ≤ 0 or pageY = 0). This handles race conditions where components haven't fully rendered yet.
+
+- **Measurement timing issues** — Integrated `InteractionManager.runAfterInteractions()` to ensure measurements occur only after animations and transitions complete, preventing incorrect readings during screen transitions.
+
+### Added
+
+- **`onLayout` prop for `OnboardingWrapper`** — The wrapper now accepts an optional `onLayout` callback, enabling consumers to respond to layout changes (e.g., re-measure after orientation change).
+
+### Changed
+
+- **Tooltip layout improvements** — Progress dots are now centered above the title for a cleaner appearance. Description `numberOfLines` increased from 4 to 5 in `OnboardingOverlay`.
+
+- **Semantic constants for tooltip sizing** — Replaced magic numbers in `estimateTooltipSize()` with named constants (`TOOLTIP_HEADER_HEIGHT`, `TOOLTIP_ACTIONS_HEIGHT`, `TOOLTIP_MAX_HEIGHT`, etc.) for better maintainability.
+
+- **Configurable measurement timing** — Extracted delays into constants: `MEASURE_INITIAL_DELAY_MS` (300ms) and `MEASURE_TRANSITION_DELAY_MS` (150ms).
+
+### Install
+
+```bash
+npm install react-native-onboarding-highlight@1.3.0
+# or
+yarn add react-native-onboarding-highlight@1.3.0
+```
+
 ## [1.2.0] - 2026-03-17
 
 ### Fixed
@@ -92,7 +122,8 @@ yarn add react-native-onboarding-highlight@1.2.0
 - Customizable themes and labels
 - Support for safe area insets
 
-[Unreleased]: https://github.com/eugustavo/react-native-onboarding-highlight/compare/v1.2.0...HEAD
+[Unreleased]: https://github.com/eugustavo/react-native-onboarding-highlight/compare/v1.3.0...HEAD
+[1.3.0]: https://github.com/eugustavo/react-native-onboarding-highlight/compare/v1.2.0...v1.3.0
 [1.2.0]: https://github.com/eugustavo/react-native-onboarding-highlight/compare/v1.1.2...v1.2.0
 [1.1.2]: https://github.com/eugustavo/react-native-onboarding-highlight/compare/v1.1.1...v1.1.2
 [1.1.1]: https://github.com/eugustavo/react-native-onboarding-highlight/compare/v1.1.0...v1.1.1
